@@ -137,8 +137,8 @@ final model = GenerativeModel(
     final ingredientsString = ingredients.join(', ');
 
     final prompt = '''
-    The user has the following ingredients in their fridge: $ingredientsString.
-    Please generate as many complete, and practical recipes as possible, using these ingredients.
+    The user has the following ingredients available: $ingredientsString.
+    Please generate all complete and practical recipes, using these ingredients only.
     The response must strictly adhere to the provided JSON schema.
   ''';
 
