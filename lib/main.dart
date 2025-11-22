@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../features/generate_recipe/presentation/GenerateRecipeScreen.dart';
+import 'features/generate_recipe/presentation/GenerateRecipeScreen.dart';
 
 
 
-void main() {
+void main() async{
+  await dotenv.load(fileName: ".env");
+
   runApp(
     const ProviderScope( // 👈 wraps your entire app so Riverpod works
       child: MyApp(),

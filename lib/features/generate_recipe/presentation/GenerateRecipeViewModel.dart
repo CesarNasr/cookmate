@@ -19,10 +19,16 @@ class RecipeViewModel extends AsyncNotifier<RecipeListContainer> {
     return RecipeListContainer(recipes: const []);
   }
 
-  Future<void> fetchRecipes(List<String> ingredients) async {
+  Future<void> fetchRecipes(String input) async {
     state = const AsyncValue.loading();
 
     try {
+      final ingredients = input
+          .split(',')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
+
       final container = await _repository.fetchRecipes(ingredients);
 
       state = AsyncValue.data(container);
@@ -36,6 +42,7 @@ class RecipeViewModel extends AsyncNotifier<RecipeListContainer> {
 
 
 
+/* todo use later : state management
 class RecipeState {
   final List<Recipe> recipes;
   final bool isLoading;
@@ -58,4 +65,4 @@ class RecipeState {
       errorMessage: errorMessage,
     );
   }
-}
+}*/

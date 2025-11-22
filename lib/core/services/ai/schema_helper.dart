@@ -1,6 +1,80 @@
+import 'package:google_generative_ai/google_generative_ai.dart';
+
+
+
+/// Defines the structure for a single ingredient within a recipe.
+final ingredientSchema = Schema(
+  SchemaType.object,
+  properties: {
+    'detail': Schema(
+      SchemaType.string,
+      description: 'The ingredient, amount, and unit combined (e.g., "200g pasta (penne or fusili)", "1 can (400g) sliced tomatoes")',
+    ),
+  },
+  requiredProperties: ['detail'],
+);
+
+/// Defines the structure for a single recipe.
+final recipeSchema = Schema(
+  SchemaType.object,
+  properties: {
+    'title': Schema(
+      SchemaType.string,
+      description: 'The creative title of the recipe.',
+    ),
+    'description_labels': Schema(
+      SchemaType.array,
+      description: 'A list of labels/tags for the recipe (e.g., "quick", "healthy", "cheap", "vegetarian").',
+      items: Schema(SchemaType.string),
+    ),
+    'level': Schema(
+      SchemaType.string,
+      description: 'The difficulty level of the recipe prep. Must be "easy", "medium", or "hard".',
+      // Using an enum is a great way to constrain text output
+      enumValues: ['easy', 'medium', 'hard'],
+    ),
+    'duration': Schema(
+      SchemaType.string,
+      description: 'The total time required to prepare the meal (e.g., "30 minutes", "1.5 hours").',
+    ),
+    'ingredients': Schema(
+      SchemaType.array,
+      description: 'A list of all required ingredients, each with a detailed amount.',
+      items: ingredientSchema, // Nested schema for the ingredient details
+    ),
+    'instructions': Schema(
+      SchemaType.array,
+      description: 'A step-by-step list of instructions to cook the meal.',
+      items: Schema(SchemaType.string),
+    ),
+  },
+  requiredProperties: ['title', 'description_labels', 'level', 'duration', 'ingredients', 'instructions'],
+);
+
+/// Defines the final top-level JSON structure.
+final recipeListSchema = Schema(
+  SchemaType.object,
+  properties: {
+    'recipes': Schema(
+      SchemaType.array,
+      description: 'A list of possible recipes based on the user-provided ingredients.',
+      items: recipeSchema, // The array contains objects conforming to the recipe schema
+    ),
+  },
+  requiredProperties: ['recipes'],
+);
+
+
+
+
+
+
+
+
+
+
+
 /* JSON SAMPLE :
-*
-*
 *
 {
   "recipes": [
