@@ -6,9 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/RecipeRepositoryImpl.dart';
 import '../domain/RecipeRepository.dart';
 
-final recipeViewModelProvider = AsyncNotifierProvider<RecipeViewModel, RecipeListContainer>(RecipeViewModel.new);
+final recipeFinderViewModelProvider = AsyncNotifierProvider<RecipeFinderViewModel, RecipeListContainer>(RecipeFinderViewModel.new);
 
-class RecipeViewModel extends AsyncNotifier<RecipeListContainer> {
+class RecipeFinderViewModel extends AsyncNotifier<RecipeListContainer> {
 
   late final RecipeRepository _repository;
 

@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'features/generate_recipe/presentation/GenerateRecipeScreen.dart';
+import 'app/MainNavigationScreen.dart';
 
 
-
-void main() async{
+void main() async {
   await dotenv.load(fileName: ".env");
 
   runApp(
-    const ProviderScope( // 👈 wraps your entire app so Riverpod works
+    const ProviderScope(
       child: MyApp(),
     ),
   );
@@ -22,11 +21,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Riverpod MVVM Demo',
+      title: 'Flutter Bottom Nav',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const RecipeFinderScreen(),
+      home: const MainNavigationScreen(),
     );
   }
 }

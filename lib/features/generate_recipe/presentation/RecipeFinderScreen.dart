@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/Recipe.dart';
-import 'GenerateRecipeViewModel.dart';
+import 'RecipeFinderViewModel.dart';
 import 'RecipeCard.dart';
 
 class RecipeFinderScreen extends ConsumerStatefulWidget {
@@ -30,12 +30,12 @@ class _RecipeFinderScreenState extends ConsumerState<RecipeFinderScreen> {
     final rawInput = ingredientsController.text.trim();
     if (rawInput.isEmpty) return;
 
-    ref.read(recipeViewModelProvider.notifier).fetchRecipes(rawInput);
+    ref.read(recipeFinderViewModelProvider.notifier).fetchRecipes(rawInput);
   }
 
   @override
   Widget build(BuildContext context) {
-    final recipeAsyncValue = ref.watch(recipeViewModelProvider);
+    final recipeAsyncValue = ref.watch(recipeFinderViewModelProvider);
 
     return Scaffold(
       appBar: AppBar(
