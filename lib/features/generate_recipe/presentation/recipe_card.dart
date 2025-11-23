@@ -2,7 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/models/Recipe.dart';
+import '../../../core/models/recipe.dart';
 
 class RecipeCard extends StatelessWidget {
   final Recipe recipe;

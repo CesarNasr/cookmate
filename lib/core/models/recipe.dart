@@ -1,4 +1,4 @@
-import 'Ingredient.dart';
+import 'ingredient.dart';
 
 class Recipe {
   final String title;

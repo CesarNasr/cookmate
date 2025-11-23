@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/models/Recipe.dart';
-import 'RecipeFinderViewModel.dart';
-import 'RecipeCard.dart';
+import '../../../providers/recipe_finder_viewmodel_provider.dart';
+import 'recipe_card.dart';
 
 class RecipeFinderScreen extends ConsumerStatefulWidget {
   const RecipeFinderScreen({super.key});

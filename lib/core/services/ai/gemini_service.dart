@@ -2,7 +2,8 @@ import 'package:cookmate/core/services/ai/schema_helper.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'dart:convert';
-import '../../models/RecipeListContainer.dart';
+import '../../models/recipe_list_container.dart';
+import '../../utils/resource.dart';
 
 //const geminiKey = String.fromEnvironment('gemini_key');
 
@@ -17,47 +18,53 @@ final model = GenerativeModel(
   apiKey: dotenv.env['GEMINI_KEY'].toString(),
 );
 
-  Future<RecipeListContainer> generateRecipes(List<String> ingredients) async {
-    final ingredientsString = ingredients.join(', ');
 
-    final prompt = '''
+Future<Resource<RecipeListContainer>> generateRecipes(List<String> ingredients) async {
+  final ingredientsString = ingredients.join(', ');
+  final prompt = '''
     The user has the following ingredients available: $ingredientsString.
     Please generate all complete and practical recipes, using these ingredients only.
     The response must strictly adhere to the provided JSON schema.
   ''';
+  final config = GenerationConfig(
+    responseMimeType: 'application/json',
+    responseSchema: recipeListSchema,
+  );
 
-    final config = GenerationConfig(
-      responseMimeType: 'application/json',
-      responseSchema: recipeListSchema,
+  try {
+    final response = await model.generateContent(
+      [Content.text(prompt)],
+      generationConfig: config,
     );
+    final rawJsonString = response.text;
+    print("GEMINI PRINTER == \n $rawJsonString");
 
-    try {
-      final response = await model.generateContent(
-        [Content.text(prompt)],
-        generationConfig: config,
-      );
+    if (rawJsonString != null) {
+      final jsonMap = jsonDecode(rawJsonString) as Map<String, dynamic>;
 
-      final rawJsonString = response.text;
-
-      print("GEMENI PRINTER == \n $rawJsonString");
-
-      if (rawJsonString != null) {
-        // 1. Decode the guaranteed JSON string into a raw Dart Map
-        final jsonMap = jsonDecode(rawJsonString) as Map<String, dynamic>;
-
-        // 2. Map the JSON Map to the Dart Model object
-        return RecipeListContainer.fromJson(jsonMap);
+      // Check for API error
+      if (jsonMap.containsKey('error')) {
+        final error = jsonMap['error'] as Map<String, dynamic>;
+        return Error(
+          message: error['message']?.toString() ?? 'Unknown error occurred',
+          code: error['code'] as int?,
+          status: error['status']?.toString(),
+        );
       }
 
-      throw Exception('Model returned an empty response.');
-    } catch (e) {
-
-      print('GEMENI PRINTER == Error generating structured recipes: $e');
-      print('GEMENI PRINTER ==  gemini key: ${dotenv.env['GEMINI_KEY'].toString()}');
-              // For robust error handling, return a model with an empty list
-      return RecipeListContainer(recipes: []);
+      // Success case
+      return Success(RecipeListContainer.fromJson(jsonMap));
     }
+
+    return const Error(message: 'Model returned an empty response.');
+  } catch (e) {
+    print('GEMINI PRINTER == Error generating structured recipes: $e');
+    return Error(message: 'Failed to generate recipes: ${e.toString()}');
   }
+}
+
+
+
 
 // Example usage:
 /*

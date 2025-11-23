@@ -1,21 +1,17 @@
 import 'dart:async';
-
-import '../../../core/models/Recipe.dart';
-import '../../../core/models/RecipeListContainer.dart';
+import '../../../core/models/recipe_list_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/RecipeRepositoryImpl.dart';
-import '../domain/RecipeRepository.dart';
+import '../../../core/utils/resource.dart';
+import '../../../providers/recipe_repository_provider.dart';
+import '../domain/recipe_repository.dart';
 
-final recipeFinderViewModelProvider = AsyncNotifierProvider<RecipeFinderViewModel, RecipeListContainer>(RecipeFinderViewModel.new);
 
 class RecipeFinderViewModel extends AsyncNotifier<RecipeListContainer> {
-
   late final RecipeRepository _repository;
 
   @override
   Future<RecipeListContainer> build() async {
     _repository = ref.read(recipesRepositoryProvider);
-
     return RecipeListContainer(recipes: const []);
   }
 
@@ -29,16 +25,30 @@ class RecipeFinderViewModel extends AsyncNotifier<RecipeListContainer> {
           .where((s) => s.isNotEmpty)
           .toList();
 
-      final container = await _repository.fetchRecipes(ingredients);
+      final result = await _repository.fetchRecipes(ingredients);
 
-      state = AsyncValue.data(container);
+      // Convert Resource to AsyncValue
+      switch (result) {
+        case Success(:final data):
+          state = AsyncValue.data(data);
 
+        case Error(:final message, :final code, :final status):
+        // Create a custom exception with more details
+          final errorMessage = code != null ? '[$code] $message' : message;
+          state = AsyncValue.error(
+            Exception(errorMessage),
+            StackTrace.current,
+          );
+
+        case Loading():
+        // This shouldn't happen in repository, but handle it
+          state = const AsyncValue.loading();
+      }
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
   }
 }
-
 
 
 

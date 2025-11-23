@@ -1,5 +1,5 @@
 
-import 'Recipe.dart';
+import 'recipe.dart';
 
 class RecipeListContainer {
   final List<Recipe> recipes;

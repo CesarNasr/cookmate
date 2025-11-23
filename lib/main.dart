@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'app/MainNavigationScreen.dart';
+import 'app/main_navigation_screen.dart';
 
 
 void main() async {

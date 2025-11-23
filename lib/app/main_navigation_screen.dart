@@ -1,8 +1,8 @@
-import 'package:cookmate/features/favourites/FavoritesScreen.dart';
-import 'package:cookmate/features/generate_recipe/presentation/RecipeFinderScreen.dart';
+import 'package:cookmate/features/favourites/favorites_screen.dart';
+import 'package:cookmate/features/generate_recipe/presentation/recipe_finder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../features/ingredients/IngredientsScreen.dart';
+import '../features/ingredients/ingredients_screen.dart';
 import '../providers/navigation_provider.dart';
 
 class MainNavigationScreen extends ConsumerWidget {
