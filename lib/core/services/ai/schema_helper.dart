@@ -22,6 +22,10 @@ final recipeSchema = Schema(
       SchemaType.string,
       description: 'The creative title of the recipe.',
     ),
+    'image_url': Schema(
+      SchemaType.string,
+      description: 'A publicly accessible HTTPS URL pointing to an image representing the recipe or final dish. The model should return a valid URL only; if no suitable image is available, this field should be set to null',
+    ),
     'description_labels': Schema(
       SchemaType.array,
       description: 'A list of labels/tags for the recipe (e.g., "quick", "healthy", "cheap", "vegetarian").',
@@ -48,7 +52,7 @@ final recipeSchema = Schema(
       items: Schema(SchemaType.string),
     ),
   },
-  requiredProperties: ['title', 'description_labels', 'level', 'duration', 'ingredients', 'instructions'],
+  requiredProperties: ['title', 'image_url' ,'description_labels', 'level', 'duration', 'ingredients', 'instructions'],
 );
 
 /// Defines the final top-level JSON structure.

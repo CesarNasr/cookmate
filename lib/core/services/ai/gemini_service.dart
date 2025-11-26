@@ -23,9 +23,10 @@ Future<Resource<RecipeListContainer>> generateRecipes(List<String> ingredients) 
   final ingredientsString = ingredients.join(', ');
   final prompt = '''
     The user has the following ingredients available: $ingredientsString.
-    Please generate all complete and practical recipes, using these ingredients only.
+    Please generate all possible recipes, using these ingredients only.
     The response must strictly adhere to the provided JSON schema.
   ''';
+  //complete and practical
   final config = GenerationConfig(
     responseMimeType: 'application/json',
     responseSchema: recipeListSchema,
@@ -45,13 +46,21 @@ Future<Resource<RecipeListContainer>> generateRecipes(List<String> ingredients) 
       // Check for API error
       if (jsonMap.containsKey('error')) {
         final error = jsonMap['error'] as Map<String, dynamic>;
-        return Error(
-          message: error['message']?.toString() ?? 'Unknown error occurred',
-          code: error['code'] as int?,
-          status: error['status']?.toString(),
-        );
+
+        if(error['code'] == 503){ //model is overloaded, retry
+          await Future.delayed( Duration(seconds: 3));
+          generateRecipes(ingredients);
+        } else {
+          return Error(
+            message: error['message']?.toString() ?? 'Unknown error occurred',
+            code: error['code'] as int?,
+            status: error['status']?.toString(),
+          );
+        }
+
       }
 
+      print("GEMENI PRINTER respnonse === \n $jsonMap ");
       // Success case
       return Success(RecipeListContainer.fromJson(jsonMap));
     }
