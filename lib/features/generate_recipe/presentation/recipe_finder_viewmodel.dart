@@ -1,17 +1,24 @@
 import 'dart:async';
+import 'package:cookmate/providers/favorites_repository_provider.dart';
+
+import '../../../core/models/recipe.dart';
 import '../../../core/models/recipe_list_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/resource.dart';
+import '../../../providers/favorites_viewmodel_provider.dart';
 import '../../../providers/recipe_repository_provider.dart';
+import '../../favourites/domain/favorites_repository.dart';
 import '../domain/recipe_repository.dart';
 
 
 class RecipeFinderViewModel extends AsyncNotifier<RecipeListContainer> {
   late final RecipeRepository _repository;
+  late final FavoritesRepository _favoritesRepository;
 
   @override
   Future<RecipeListContainer> build() async {
     _repository = ref.read(recipesRepositoryProvider);
+    _favoritesRepository = ref.read(favoritesRepositoryProvider);
     return RecipeListContainer(recipes: const []);
   }
 
@@ -46,6 +53,27 @@ class RecipeFinderViewModel extends AsyncNotifier<RecipeListContainer> {
       }
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+    }
+  }
+
+
+  // Add recipe to favorites (if needed)
+  void addToFavorites(Recipe recipe) async {
+    try {
+       await _favoritesRepository.addFavorite(recipe);
+      ref.read(favoritesViewmodelProvider.notifier).fetchFavorites();
+    } catch (e, stack) {
+
+    }
+  }
+
+  // Add recipe to favorites (if needed)
+  void removeFavorite(int recipeId) async {
+    try {
+       await _favoritesRepository.removeFavorite(recipeId);
+      ref.read(favoritesViewmodelProvider.notifier).fetchFavorites();
+    } catch (e, stack) {
+
     }
   }
 }

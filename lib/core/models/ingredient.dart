@@ -10,4 +10,10 @@ class Ingredient {
       detail: json['detail'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'detail': detail,
+    };
+  }
 }

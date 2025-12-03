@@ -18,6 +18,10 @@ final ingredientSchema = Schema(
 final recipeSchema = Schema(
   SchemaType.object,
   properties: {
+    'id': Schema(
+      SchemaType.integer,
+      description: 'A unique ID for each recipe, derived from current timestamp',
+    ),
     'title': Schema(
       SchemaType.string,
       description: 'The creative title of the recipe.',
@@ -52,7 +56,7 @@ final recipeSchema = Schema(
       items: Schema(SchemaType.string),
     ),
   },
-  requiredProperties: ['title', 'image_url' ,'description_labels', 'level', 'duration', 'ingredients', 'instructions'],
+  requiredProperties: ['title', 'image_url' ,'description_labels', 'level', 'duration', 'ingredients', 'instructions', 'id'],
 );
 
 /// Defines the final top-level JSON structure.

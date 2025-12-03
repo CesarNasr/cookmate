@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/router/app_router.dart';
+import '../../../../core/models/recipe.dart';
+import '../../../../providers/recipe_finder_viewmodel_provider.dart';
 
 class RecipeFinderScreen extends ConsumerStatefulWidget {
   const RecipeFinderScreen({super.key});
@@ -23,6 +25,7 @@ class _RecipeFinderScreenState extends ConsumerState<RecipeFinderScreen> {
   @override
   void dispose() {
     ingredientsController.dispose();
+
     super.dispose();
   }
 
@@ -49,16 +52,44 @@ class _RecipeFinderScreenState extends ConsumerState<RecipeFinderScreen> {
     });
   }
 
-  void findRecipes() {
+  Future<void> findRecipes() async {
     if (selectedIngredients.isEmpty) return;
 
     final ingredients = selectedIngredients.join(', ');
-    // Navigate to recipe list screen with ingredients
-    context.push(RECIPE_LIST_SCREEN_ROUTE, extra: ingredients);
+
+    // Fetch recipes
+    await ref.read(recipeFinderViewModelProvider.notifier).fetchRecipes(ingredients);
+
+    // Check the result after fetch completes
+    if (mounted) {
+      final recipeState = ref.read(recipeFinderViewModelProvider);
+
+      recipeState.when(
+        data: (container) {
+          // Navigate with the data if successful
+          context.push(RECIPE_LIST_SCREEN_ROUTE, extra: container);
+        },
+        error: (error, stack) {
+          // Show error in SnackBar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${error.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+        loading: () {
+          // This shouldn't happen as we wait for the future to complete
+        },
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final recipeState = ref.watch(recipeFinderViewModelProvider);
+    final isLoading = recipeState.isLoading;
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
@@ -91,6 +122,7 @@ class _RecipeFinderScreenState extends ConsumerState<RecipeFinderScreen> {
               // Input Field
               TextField(
                 controller: ingredientsController,
+                enabled: !isLoading,
                 decoration: InputDecoration(
                   hintText: 'e.g., chicken breast, tomatoes, rice',
                   hintStyle: TextStyle(color: Colors.grey[400]),
@@ -108,16 +140,20 @@ class _RecipeFinderScreenState extends ConsumerState<RecipeFinderScreen> {
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Colors.green, width: 2),
                   ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.mic, color: Colors.grey),
-                    onPressed: () {
+                    onPressed: isLoading ? null : () {
                       // Voice input functionality can be added here
                     },
                   ),
                 ),
-                onSubmitted: (_) => addIngredient(),
+                onSubmitted: (_) => isLoading ? null : addIngredient(),
                 onChanged: (value) {
-                  if (value.endsWith(',')) {
+                  if (value.endsWith(',') && !isLoading) {
                     addIngredient();
                   }
                 },
@@ -136,7 +172,7 @@ class _RecipeFinderScreenState extends ConsumerState<RecipeFinderScreen> {
                       color: Colors.black87,
                     ),
                   ),
-                  if (selectedIngredients.isNotEmpty)
+                  if (selectedIngredients.isNotEmpty && !isLoading)
                     TextButton(
                       onPressed: clearAllIngredients,
                       child: const Text(
@@ -177,7 +213,7 @@ class _RecipeFinderScreenState extends ConsumerState<RecipeFinderScreen> {
                       ),
                       backgroundColor: Colors.green[50],
                       deleteIcon: const Icon(Icons.close, size: 18),
-                      onDeleted: () => removeIngredient(ingredient),
+                      onDeleted: isLoading ? null : () => removeIngredient(ingredient),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                         side: BorderSide.none,
@@ -191,7 +227,7 @@ class _RecipeFinderScreenState extends ConsumerState<RecipeFinderScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: selectedIngredients.isEmpty ? null : findRecipes,
+                  onPressed: (selectedIngredients.isEmpty || isLoading) ? null : findRecipes,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
@@ -202,7 +238,16 @@ class _RecipeFinderScreenState extends ConsumerState<RecipeFinderScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: Row(
+                  child: isLoading
+                      ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                      : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
                       Icon(Icons.auto_awesome, size: 20),

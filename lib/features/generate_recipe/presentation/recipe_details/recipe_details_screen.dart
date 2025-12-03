@@ -1,26 +1,39 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/models/recipe.dart';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../providers/recipe_finder_viewmodel_provider.dart';
 import 'chip_widget.dart';
 
-class RecipeDetailsScreen extends StatefulWidget {
+
+
+class RecipeDetailsScreen extends ConsumerStatefulWidget {
   final Recipe recipe;
 
   const RecipeDetailsScreen({super.key, required this.recipe});
 
   @override
-  State<RecipeDetailsScreen> createState() => _RecipeDetailsScreenState();
+  ConsumerState<RecipeDetailsScreen> createState() => _RecipeDetailsScreen();
 }
 
-class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
+
+
+class _RecipeDetailsScreen extends ConsumerState<RecipeDetailsScreen> {
   bool isFavorite = false;
   bool isIngredientsExpanded = true;
 
+  void addFavorite(Recipe recipe){
+    ref.read(recipeFinderViewModelProvider.notifier).addToFavorites(recipe);
+  }
+
+  void removeFavorite(Recipe recipe){
+    ref.read(recipeFinderViewModelProvider.notifier).removeFavorite(recipe.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +71,11 @@ class _RecipeDetailsScreenState extends State<RecipeDetailsScreen> {
                     onPressed: () {
                       setState(() {
                         isFavorite = !isFavorite;
+                        if (isFavorite) {
+                          addFavorite(widget.recipe);
+                        } else {
+                          removeFavorite(widget.recipe);
+                        }
                       });
                     },
                   ),

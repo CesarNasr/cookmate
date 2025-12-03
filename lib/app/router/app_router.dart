@@ -1,5 +1,5 @@
 import 'package:cookmate/core/models/ingredient.dart';
-import 'package:cookmate/features/favourites/favorites_screen.dart';
+import 'package:cookmate/features/favourites/presentation/favorites_screen.dart';
 import 'package:cookmate/features/generate_recipe/presentation/recipe_finder/recipe_finder_screen.dart';
 import 'package:cookmate/features/generate_recipe/presentation/recipe_list/recipe_list_screen.dart';
 import 'package:cookmate/features/ingredients/ingredients_screen.dart';
@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/models/recipe.dart';
+import '../../core/models/recipe_list_container.dart';
 import '../../features/generate_recipe/presentation/recipe_details/recipe_details_screen.dart';
 import '../main_navigation_screen.dart';
 
@@ -53,8 +54,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       path: 'recipe_list',
                       builder: (context, state) {
                         // Get the object from extra
-                        final ingredients = state.extra as String;
-                        return RecipeListScreen(ingredients: ingredients);
+                        final recipeContainer = state.extra as RecipeListContainer;
+                        return RecipeListScreen(recipesContainer: recipeContainer);
                       },
                     ),
                   ]

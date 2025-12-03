@@ -1,6 +1,9 @@
+import 'dart:ffi';
+
 import 'ingredient.dart';
 
 class Recipe {
+  final int id;
   final String title;
   final String imageUrl;
   final List<String> descriptionLabels;
@@ -11,6 +14,7 @@ class Recipe {
 
 
   Recipe({
+    required this.id,
     required this.title,
     required this.imageUrl,
     required this.descriptionLabels,
@@ -22,6 +26,7 @@ class Recipe {
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
+      id: json['id'] as int,
       title: json['title'] as String,
       imageUrl: json['image_url'] as String,
       // Map the dynamic list to a List<String>
@@ -39,5 +44,19 @@ class Recipe {
           .map((e) => e as String)
           .toList(),
     );
+  }
+
+  // Convert to JSON for Hive storage
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'image_url': imageUrl,
+      'description_labels': descriptionLabels,
+      'level': level,
+      'duration': duration,
+      'ingredients': ingredients.map((e) => e.toJson()).toList(),
+      'instructions': instructions,
+    };
   }
 }

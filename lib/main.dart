@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'app/main_navigation_screen.dart';
 import 'app/router/app_router.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
+
+  final appDocumentDir = await getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDir.path);
+  await Hive.openBox('favorites');
 
   runApp(const ProviderScope(child: MyApp()));
 }
