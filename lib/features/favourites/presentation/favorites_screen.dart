@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router/app_router.dart';
 import '../../../core/models/recipe.dart';
 import '../../../providers/favorites_viewmodel_provider.dart';
 
@@ -65,8 +67,7 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
           recipe: recipe,
           onLongPress: () => _showDeleteDialog(recipe),
           onTap: () {
-            // Navigate to recipe detail
-            // Navigator.push(context, MaterialPageRoute(...));
+            context.push(FAV_RECIPE_DETAILS_SCREEN_ROUTE, extra: recipe);
           },
         );
       },
@@ -212,13 +213,13 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
           content: Text('${recipe.title} removed from favorites'),
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
-          action: SnackBarAction(
+          /*action: SnackBarAction(
             label: 'Undo',
             textColor: const Color(0xFFFF7043),
             onPressed: () {
               // Optional: Add undo functionality
             },
-          ),
+          ),*/
         ),
       );
     }

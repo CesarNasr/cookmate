@@ -21,7 +21,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return MainNavigationScreen(navigationShell: navigationShell);
         },
         branches: [
-          StatefulShellBranch(
+          /*StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/ingredients',
@@ -30,7 +30,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 ),
               ),
             ],
-          ),
+          ),*/
           // Search Branch
           StatefulShellBranch(
             routes: [
@@ -70,6 +70,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: FavoritesScreen(),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'recipe_details',
+                    builder: (context, state) {
+                      // Get the object from extra
+                      final recipe = state.extra as Recipe;
+                      return RecipeDetailsScreen(recipe: recipe);
+                    },
+                  ),
+                ]
               ),
             ],
           ),
@@ -83,3 +93,5 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
 const RECIPE_DETAILS_SCREEN_ROUTE = '/recipe_finder/recipe_details';
 const RECIPE_LIST_SCREEN_ROUTE = '/recipe_finder/recipe_list';
+
+const FAV_RECIPE_DETAILS_SCREEN_ROUTE = '/favorites/recipe_details';

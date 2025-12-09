@@ -1,4 +1,4 @@
-package com.example.cookmate
+package com.app.cookmate
 
 import io.flutter.embedding.android.FlutterActivity
 

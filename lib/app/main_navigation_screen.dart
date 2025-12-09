@@ -23,12 +23,6 @@ class MainNavigationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final screens = [
-      const IngredientsScreen(),
-      const RecipeFinderScreen(),
-      const FavoritesScreen(),
-    ];
-
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: Container(
@@ -48,26 +42,26 @@ class MainNavigationScreen extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(
+               /* _buildNavItem(
                   context,
                   icon: Icons.kitchen_outlined,
                   label: 'Ingredients',
                   index: 0,
                   isSelected: navigationShell.currentIndex == 0,
-                ),
+                ),*/
                 _buildNavItem(
                   context,
                   icon: Icons.restaurant_menu,
                   label: 'Recipes',
-                  index: 1,
-                  isSelected: navigationShell.currentIndex == 1,
+                  index: 0,
+                  isSelected: navigationShell.currentIndex == 0,
                 ),
                 _buildNavItem(
                   context,
                   icon: Icons.bookmark_border,
                   label: 'Saved',
-                  index: 2,
-                  isSelected: navigationShell.currentIndex == 2,
+                  index: 1,
+                  isSelected: navigationShell.currentIndex == 1,
                 ),
               ],
             ),
