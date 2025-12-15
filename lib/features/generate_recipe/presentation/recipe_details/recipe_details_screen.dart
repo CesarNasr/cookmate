@@ -1,16 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../../core/models/recipe.dart';
-
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/models/recipe.dart';
 import '../../../../providers/recipe_finder_viewmodel_provider.dart';
 import 'chip_widget.dart';
-
-
 
 class RecipeDetailsScreen extends ConsumerStatefulWidget {
   final Recipe recipe;
@@ -21,17 +15,15 @@ class RecipeDetailsScreen extends ConsumerStatefulWidget {
   ConsumerState<RecipeDetailsScreen> createState() => _RecipeDetailsScreen();
 }
 
-
-
 class _RecipeDetailsScreen extends ConsumerState<RecipeDetailsScreen> {
   bool isFavorite = false;
   bool isIngredientsExpanded = true;
 
-  void addFavorite(Recipe recipe){
+  void addFavorite(Recipe recipe) {
     ref.read(recipeFinderViewModelProvider.notifier).addToFavorites(recipe);
   }
 
-  void removeFavorite(Recipe recipe){
+  void removeFavorite(Recipe recipe) {
     ref.read(recipeFinderViewModelProvider.notifier).removeFavorite(recipe.id);
   }
 
@@ -101,9 +93,9 @@ class _RecipeDetailsScreen extends ConsumerState<RecipeDetailsScreen> {
                             width: double.infinity,
                             fit: BoxFit.fill,
                             errorBuilder: (context, error, stackTrace) {
-                              return SizedBox(
+                              return const SizedBox(
                                 height: 150,
-                                child: const Icon(Icons.restaurant, size: 64),
+                                child: Icon(Icons.restaurant, size: 64),
                               );
                             },
                           ),
@@ -133,8 +125,8 @@ class _RecipeDetailsScreen extends ConsumerState<RecipeDetailsScreen> {
                                   label: widget.recipe.descriptionLabels[index],
                                   color: Colors.orange,
                                 );
-                              },),
-
+                              },
+                            ),
                           const SizedBox(width: 8),
                           buildInfoChip(
                             icon: Icons.trending_up,
@@ -201,20 +193,14 @@ class _RecipeDetailsScreen extends ConsumerState<RecipeDetailsScreen> {
 
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 12.0),
-                                    child: Expanded(
-                                     child: Padding(
-                                       padding: const EdgeInsets.only(top: 12.0),
-                                       child: Text(
-                                         ingredient.detail,
-                                         style: TextStyle(
-                                           fontSize: 15,
-                                           color: Colors.grey[800],
-
-                                           height: 1.5,
-                                         ),
-                                       ),
-                                     ),
-                                                                            ),
+                                    child: Text(
+                                      ingredient.detail,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.grey[800],
+                                        height: 1.5,
+                                      ),
+                                    ),
                                   );
                                 },
                               ),
@@ -314,5 +300,4 @@ class _RecipeDetailsScreen extends ConsumerState<RecipeDetailsScreen> {
       ),
     );
   }
-
 }
